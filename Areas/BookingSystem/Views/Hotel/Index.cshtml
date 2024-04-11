@@ -1,5 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using GBC_Travel_Group_136.Areas.BookingSystem.Models;
+@model List<Hotel>
 @{
+	ViewData["Title"] = "Fly";
 }
+
+<h1>@ViewData["Title"]</h1>
+
+<!-- search bar -->
+@if (Model.Any())
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<td>Hotel</td>
+				<td>Location</td>
+				<td>Description</td>
+				<td>Room Types & Price</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var h in Model)
+			{
+				<tr>
+					<td>@h.HotelName</td>
+					<td>@h.Location</td>
+					<td>@h.Description</td>
+					<td>
+						@foreach (var room in h.Rooms)
+						{
+							<p>@room.RoomType : @room.Price</p>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	{
+		<p>No Projects</p>
+	}
+}
+

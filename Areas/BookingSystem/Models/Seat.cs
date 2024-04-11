@@ -5,7 +5,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
     public class Seat
     {
         [Key]
-        public int Id { get; set; }
+        public int SeatId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -19,5 +19,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
         [Required]
         [Display(Name = "Price")]
         public double Price { get; set;}
+
+        public int FlightId { get; set; }
     }
 }

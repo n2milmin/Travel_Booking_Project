@@ -1,5 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
+@model List<Car>
 @{
+	ViewData["Title"] = "Drive";
 }
+
+<h1>@ViewData["Title"]</h1>
+
+<!-- search bar -->
+@if (Model.Any())
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<td>Company</td>
+				<td>Location</td>
+				<td>Make</td>
+				<td>Model</td>
+				<td>Price</td>
+				<td>Available</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var f in Model)
+			{
+				<tr>
+					<td>@f.Company</td>
+					<td>@f.Location</td>
+					<td>@f.Make</td>
+					<td>@f.Model</td>
+					<td>@f.Price</td>
+					<td>@f.Available.ToString()</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	{
+		<p>No Projects</p>
+	}
+}
+

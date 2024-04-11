@@ -5,7 +5,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
     public class Car
     {
         [Key]
-        public int Id { get; set; }
+        public int CarId { get; set; }
 
         [Required]
         [Display(Name = "Company")]

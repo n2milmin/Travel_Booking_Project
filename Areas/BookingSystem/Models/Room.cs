@@ -5,7 +5,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
     public class Room
     {
         [Key]
-        public int Id { get; set; }
+        public int RoomId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -15,7 +15,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
         [Required]
         [StringLength(50)]
         [Display(Name = "Description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [Display(Name = "Amount")]
@@ -24,5 +24,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
         [Required]
         [Display(Name = "Price")]
         public double Price { get; set; }
+
+        public int HotelId { get; set; }
     }
 }

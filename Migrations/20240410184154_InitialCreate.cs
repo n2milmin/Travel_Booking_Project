@@ -16,10 +16,10 @@ namespace GBC_Travel_Group_136.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Cars",
-                columns: table => new
+				schema: "Identity",
+				columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CarId = table.Column<int>(type: "int", nullable: false),
                     Company = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Make = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -29,74 +29,87 @@ namespace GBC_Travel_Group_136.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cars", x => x.Id);
+                    table.PrimaryKey("PK_Cars", x => x.CarId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Flights",
-                columns: table => new
+				schema: "Identity",
+				columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FlightId = table.Column<int>(type: "int", nullable: false),
                     Airline = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FlightNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Origin = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Destination = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Departure = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Arrival = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Seats = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Flights", x => x.Id);
+                    table.PrimaryKey("PK_Flights", x => x.FlightId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Hotels",
-                columns: table => new
+				schema: "Identity",
+				columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HotelId = table.Column<int>(type: "int", nullable: false),
                     HotelName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Location = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Rooms = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Hotels", x => x.Id);
+                    table.PrimaryKey("PK_Hotels", x => x.HotelId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Rooms",
-                columns: table => new
+				schema: "Identity",
+				columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
                     RoomType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    HotelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rooms", x => x.Id);
+                    table.PrimaryKey("PK_Rooms", x => x.RoomId);
+                    table.ForeignKey(
+                        name: "FK_Rooms_Hotels_HotelId",
+                        column: x => x.RoomId,
+                        principalSchema: "Identity",
+                        principalTable: "Hotels",
+                        principalColumn: "HotelId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Seats",
-                columns: table => new
+				schema: "Identity",
+				columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeatId = table.Column<int>(type: "int", nullable: false),
                     SeatType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    FlightId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Seats", x => x.Id);
-                });
+                    table.PrimaryKey("PK_Seats", x => x.SeatId);
+					table.ForeignKey(
+						name: "FK_Seats_Flights_FlightId",
+						column: x => x.SeatId,
+						principalSchema: "Identity",
+						principalTable: "Flights",
+						principalColumn: "FlightId",
+						onDelete: ReferentialAction.Cascade);
+				});
 
             migrationBuilder.CreateTable(
                 name: "Role",
@@ -262,23 +275,38 @@ namespace GBC_Travel_Group_136.Migrations
 
 
 
-           /* migrationBuilder.InsertData(
-                schema: "Identity",
-                table: "Projects",
-                columns: new[] { "ProjectId", "Description", "EndDate", "Name", "StartDate", "Status" },
+            migrationBuilder.InsertData(
+				schema: "Identity",
+				table: "Flights",
+                columns: new[] { "FlightId", "Airline", "Origin", "Destination", "Departure", "Arrival" },
                 values: new object[,]
                 {
-                    { 1, "First COMP2139 Assignment", new DateTime(2024, 2, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), "COMP2139 Assignment 1", new DateTime(2024, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "In Progress" },
-                    { 2, "Second COMP2139 Assignment", new DateTime(2024, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "COMP2139 Assignment 2", new DateTime(2024, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "In Progress" }
-                }); 
+                    { 1, "Air Canada", "Toronto", "Vancouver", new DateTime(2024, 2, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 24, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "Spirit", "Vancouver", "Toronto", new DateTime(2024, 2, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 2, 24, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ProjectComments_ProjectId",
-                schema: "Identity",
-                table: "ProjectComments", 
-                column: "ProjectId"); */
+            migrationBuilder.InsertData(
+				schema: "Identity",
+				table: "Hotels",
+                columns: new[] { "HotelId", "HotelName", "Location", "Description" },
+                values: new object[,]
+                {
+                    { 1, "Best Western", "Toronto", "Pool, nice view." },
+                    { 2, "Heather's", "Vancouver", "Beautiful garden, close to water."}
+                });
 
-            migrationBuilder.CreateIndex(
+            migrationBuilder.InsertData(
+				schema: "Identity",
+				table: "Cars",
+                columns: new[] { "CarId", "Company", "Location", "Make", "Model", "Price", "Available" },
+                values: new object[,]
+                {
+                    { 1, "Shelters", "Toronto", "Ford", "F150", 50, true },
+                    { 2, "BananaRama", "Vancouver", "Mazda", "CX-5", 60, true }
+                });
+
+
+			migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "Identity",
                 table: "Role",
@@ -330,19 +358,24 @@ namespace GBC_Travel_Group_136.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Cars");
+                name: "Cars",
+				schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Flights");
+                name: "Flights",
+				schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Hotels");
+                name: "Hotels",
+				schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
+                name: "Rooms", 
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Seats");
+                name: "Seats",
+				schema: "Identity");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",

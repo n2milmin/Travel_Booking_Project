@@ -1,0 +1,76 @@
+﻿@using GBC_Travel_Group_136.Areas.BookingSystem.Models;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.WebUtilities;
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+
+}
+
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Search Form -->
+        <form class="d-flex" asp-controller="/" asp-action="GeneralSearch" method="get">
+            <input class="form-control" type="text" placeholder="Search" name="searchString" />
+            <select class="form-control btn btnalert-secondary dropdown-toggle" name="searchType">
+                <option value="Flight">Flights</option>
+                <option value="Car">Cars</option>
+                <option value="Hotel">Hotels</option>
+            </select>
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">        
+            <ul class="navbar-nav flex-grow-1 justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="/" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="BookingSystem" asp-controller="Flight" asp-action="Index"><i class="fa-solid fa-plane"></i>Fly</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="BookingSystem" asp-controller="Car" asp-action="Index"><i class="fa-solid fa-car"></i>Drive</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="BookingSystem" asp-controller="Hotel" asp-action="Index"><i class="fa-solid fa-bed"></i>Sleep</a>
+                </li>
+
+                @if (SignInManager.IsSignedIn(User))
+                {
+                     <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" 
+                                title="Manage your account"><i class="fa fa-user-circle"></i> Profile</a>
+                    </li>                    
+                    <li class="nav-item">
+                        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                            <button type="submit" class="nav-link btn btn-link text-dark" style="cursor:pointer">Logout</button>
+                        </form>
+                    </li> /*
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="/" asp-controller="/RoleManager">
+                            <i class="fa fa-sign-in-alt"></i> Role Manager
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="/" asp-controller="/UserRoles">
+                            <i class="fa fa-sign-in-alt"></i> User Roles
+                        </a>
+                    </li> */
+                }
+                else
+                {
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-user-circle"></i> Account</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
