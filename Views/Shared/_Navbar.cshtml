@@ -47,25 +47,38 @@
                         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" 
                                 title="Manage your account"><i class="fa fa-user-circle"></i> Profile</a>
                     </li>
-                    /*
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="/" asp-controller="/RoleManager">
-                            <i class="fa fa-sign-in-alt"></i> Role Manager
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           id="navbarDropdown"
+                           role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true"
+                           aria-expanded="false">
+                            <i class="fa fa-user-circle"></i>
+                            Account
+                            <i class="fa fa-down-arrow"></i>
                         </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item"
+                               asp-area="Identity"
+                               asp-page="/Account/Manage/Index">
+                                Profile
+                            </a>
+                            <a class="dropdown-item"
+                               asp-area="BookingSystem"
+                               asp-controller="Booking">
+                                My Bookings
+                            </a>
+                            <a class="dropdown-item"
+                               asp-area="Identity"
+                               asp-page="/Account/Logout">
+                                Logout
+                            </a>
+                        </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="/" asp-controller="/UserRoles">
-                            <i class="fa fa-sign-in-alt"></i> User Roles
-                        </a>
-                    </li> */
                 }
                 else
-                {
-
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-user-circle"></i> Account</a>
-                    </li>
-                    
+                {                                        
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" 
                             id="navbarDropdown" 
@@ -73,9 +86,22 @@
                             data-toggle="dropdown"
                             aria-haspopup="true"
                             aria-expanded="false">
+                            <i class="fa fa-user-circle"></i> 
                             Account
+                            <i class="fa fa-down-arrow"></i>
                         </a>
-                        <div></div>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" 
+                                asp-area="Identity"
+                                asp-page="/Account/Login">
+                                Login
+                            </a>
+                            <a class="dropdown-item"
+                                asp-area="Identity"
+                                asp-page="/Account/Register">
+                                Register
+                            </a>
+                        </div>
                     </li>
                 }
             </ul>
