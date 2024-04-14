@@ -1,0 +1,15 @@
+﻿@model GBC_Travel_Group_136.Areas.BookingSystem.Models.Flight
+
+<div class="hotel-summary">
+	<p><b>Origin:</b> @Model.Origin</p>
+	<p><b>Destination: </b>@Model.Destination</p>
+	<p><b>Departing: </b>@Model.Departure</p>
+	<p><b>Arrival: </b>@Model.Arrival</p>
+	<p><b>Seats</b></p>
+	<ul>
+		@foreach (var task in Model.Seats)
+		{
+			<li>@task.SeatType - $@task.Price</li>
+		}
+	</ul>
+</div>

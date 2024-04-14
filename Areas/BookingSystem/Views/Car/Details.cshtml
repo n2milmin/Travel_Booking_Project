@@ -1,0 +1,44 @@
+﻿@model GBC_Travel_Group_136.Areas.BookingSystem.Models.Car
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@using GBC_Travel_Group_136.Enum
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    @Html.Partial("_CarDetails.cshtml", Model)
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <a asp-action="Book"
+                        asp-controller="Car"
+                        asp-route-carId="@Model.CarId" 
+                        class="btn btn-info">Book</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div>
+    @if (User.IsInRole(Roles.Admin.ToString()))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.CarId">Edit</a>
+        <br />
+        <a asp-action="Delete" asp-route-id="@Model.CarId">Delete</a>
+        <br />
+    }
+    <a asp-action="Index">Back to List</a>
+</div>

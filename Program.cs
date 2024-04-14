@@ -7,8 +7,7 @@ using GBC_Travel_Group_136.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Connect to SqlServer
 builder.Services.AddDbContext<AppDbContext>(options => 
@@ -50,8 +49,8 @@ try
     AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    //await ContextSeed.SeedRolesAsync(userManager, roleManager);
-    //await ContextSeed.SeedSuperAdminAsync(userManager, roleManager);
+    await ContextSeed.SeedRolesAsync(userManager, roleManager);
+    await ContextSeed.SeedSuperAdminAsync(userManager, roleManager);
 }
 catch (Exception e)
 {
@@ -66,6 +65,18 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapRazorPages();
+
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Car}/{action=Index}/{id?}");
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Hotel}/{action=Index}/{id?}");
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Flight}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

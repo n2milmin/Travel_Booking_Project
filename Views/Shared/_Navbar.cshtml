@@ -43,15 +43,11 @@
 
                 @if (SignInManager.IsSignedIn(User))
                 {
-                     <li class="nav-item">
+                     <li class="nav-item"> 
                         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" 
                                 title="Manage your account"><i class="fa fa-user-circle"></i> Profile</a>
-                    </li>                    
-                    <li class="nav-item">
-                        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-                            <button type="submit" class="nav-link btn btn-link text-dark" style="cursor:pointer">Logout</button>
-                        </form>
-                    </li> /*
+                    </li>
+                    /*
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="/" asp-controller="/RoleManager">
                             <i class="fa fa-sign-in-alt"></i> Role Manager
@@ -68,6 +64,18 @@
 
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-user-circle"></i> Account</a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" 
+                            id="navbarDropdown" 
+                            role="button" 
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                            Account
+                        </a>
+                        <div></div>
                     </li>
                 }
             </ul>

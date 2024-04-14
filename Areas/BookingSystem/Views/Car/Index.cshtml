@@ -1,7 +1,14 @@
-﻿
-@model List<Car>
+﻿@model List<Car>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@using GBC_Travel_Group_136.Enum
 @{
 	ViewData["Title"] = "Drive";
+	// Search parameters
+	bool searchPerformed = ViewData["SearchPerformed"] as bool? ?? false;
+	string searchString = ViewData["SearchString"] as string;
+	string searchType = ViewData["SearchType"] as string;
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,23 +20,40 @@
 		<thead>
 			<tr>
 				<td>Company</td>
-				<td>Location</td>
-				<td>Make</td>
-				<td>Model</td>
-				<td>Price</td>
-				<td>Available</td>
+				<td>Info</td>
+				<td></td>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var f in Model)
+			@foreach (var h in Model)
 			{
 				<tr>
-					<td>@f.Company</td>
-					<td>@f.Location</td>
-					<td>@f.Make</td>
-					<td>@f.Model</td>
-					<td>@f.Price</td>
-					<td>@f.Available.ToString()</td>
+					<td><b>@h.Company</b>
+					<p>@h.Location</p>
+					</td>
+					<td>
+						<div class="car-summary">
+							<p><b>Make:</b> @h.Make</p>
+							<p><b>Model:</b> @h.Model</p>
+							<p><b>Price:</b> $@h.Price per day</p>
+							@if (h.Available)
+							{
+								<p><b>Available</b></p>
+							}
+							else
+							{
+								<p><b>Unavailable</b></p>
+							}
+						</div>
+					<td>
+						<a asp-area="BookingSystem" asp-action="Details" asp-route-id="@h.CarId" class="btn btn-info">Details</a>
+						<a asp-area="BookingSystem" asp-action="BookCar" asp-route-id="@h.CarId" class="btn btn-info">Book</a>
+						@if (User.IsInRole(Roles.Admin.ToString()))
+						{
+							<a asp-area="BookingSystem" asp-action="Edit" asp-route-id="@h.CarId" class="btn btn-secondary">Edit</a>
+							<a asp-area="BookingSystem" asp-action="Delete" asp-route-id="@h.CarId" class="btn btn-danger">Delete</a>
+						}
+					</td>
 				</tr>
 			}
 		</tbody>
@@ -37,8 +61,17 @@
 }
 else
 {
+	if (searchPerformed)
 	{
-		<p>No Projects</p>
+		<p>No Cars name with keyword "@searchString".</p>
+	}
+	else
+	{
+		<p>No Cars</p>
 	}
 }
 
+@if (User.IsInRole(Roles.Admin.ToString()))
+{
+	<a class="btn btn-primary" asp-controller="Car" asp-action="Create">Add New Flight</a>
+}

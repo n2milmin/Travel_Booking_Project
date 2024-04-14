@@ -1,0 +1,19 @@
+﻿@model Car
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+    <p>You are not signed in. Would you like to sign in or continue as a guest?</p>
+    <div class="nav-item">
+        <a class="btn btn-primary" 
+            asp-area="Identity" 
+            asp-page="/Account/Login" 
+            asp-route-returnUrl="@Url.Action("BookCar", "UserBooking", Model.CarId)">Sign In</a>
+    
+        <a class="btn btn-primary" 
+            asp-area="BookingSystem" 
+            asp-controller="GuestBooking"
+            asp-action="BookCar" 
+            asp-route-id="@Model.CarId">Continue as Guest</a>
+    </div>

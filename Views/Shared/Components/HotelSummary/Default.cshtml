@@ -1,0 +1,12 @@
+﻿@model GBC_Travel_Group_136.Areas.BookingSystem.Models.Hotel
+
+<div class="hotel-summary">
+	<p><b>@Model.Description</b></p>
+	<p><b>Rooms</b></p>
+	<ul>
+		@foreach (var task in Model.Rooms)
+		{
+			<li>@task.RoomType : $@task.Price</li>
+		}
+	</ul>
+</div>

@@ -1,7 +1,12 @@
-﻿@using GBC_Travel_Group_136.Areas.BookingSystem.Models;
-@model List<Hotel>
+﻿@model List<Hotel>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@using GBC_Travel_Group_136.Enum
 @{
-	ViewData["Title"] = "Fly";
+	ViewData["Title"] = "Sleep";
+	bool searchPerformed = ViewData["SearchPerformed"] as bool? ?? false;
+	string searchString = ViewData["SearchString"] as string;
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,22 +18,23 @@
 		<thead>
 			<tr>
 				<td>Hotel</td>
-				<td>Location</td>
-				<td>Description</td>
-				<td>Room Types & Price</td>
+				<td>Info</td>
+				<td></td>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var h in Model)
+			@foreach (var hotel in Model)
 			{
 				<tr>
-					<td>@h.HotelName</td>
-					<td>@h.Location</td>
-					<td>@h.Description</td>
+					<td>@hotel.HotelName</td>
+					<td>@await Component.InvokeAsync("HotelSummary", new { hotelId = hotel.HotelId })</td>
 					<td>
-						@foreach (var room in h.Rooms)
+						<a asp-action="Details" asp-route-id="@hotel.HotelId" class="btn btn-info">Details</a>
+						<a asp-action="Book" asp-route-id="@hotel.HotelId" class="btn btn-info">Book</a>
+						@if (User.IsInRole(Roles.Admin.ToString()))
 						{
-							<p>@room.RoomType : @room.Price</p>
+							<a asp-action="Edit" asp-route-id="@hotel.HotelId" class="btn btn-secondary">Edit</a>
+							<a asp-action="Delete" asp-route-id="@hotel.HotelId" class="btn btn-danger">Delete</a>
 						}
 					</td>
 				</tr>
@@ -38,8 +44,17 @@
 }
 else
 {
+	if (searchPerformed)
 	{
-		<p>No Projects</p>
+		<p>No Hotels name with keyword "@searchString".</p>
+	}
+	else
+	{
+		<p>No Hotels</p>
 	}
 }
 
+@if (User.IsInRole(Roles.Admin.ToString()))
+{
+	<a class="btn btn-primary" asp-controller="Hotel" asp-action="Create">Add New Flight</a>
+}

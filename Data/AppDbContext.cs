@@ -17,6 +17,7 @@ namespace GBC_Travel_Group_136.Data
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Room> Rooms { get; set; }
+		public DbSet<Booking> Bookings { get; set; }
 
 
 
@@ -180,9 +181,9 @@ namespace GBC_Travel_Group_136.Data
 			});
 
 
+            builder.HasDefaultSchema("Identity");
 
-
-			builder.Entity<ApplicationUser>(entity =>
+            builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "User");
             });

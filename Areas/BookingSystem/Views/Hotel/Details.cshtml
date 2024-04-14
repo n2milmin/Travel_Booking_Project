@@ -1,0 +1,64 @@
+﻿@model GBC_Travel_Group_136.Areas.BookingSystem.Models.Hotel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@using GBC_Travel_Group_136.Enum
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Hotel</h4>
+    <hr />
+    @Html.Partial("_HotelDetails.cshtml", Model)
+    <hr />
+    <h4>Rooms</h4>
+    <table>
+        <thead>
+            <tr>
+                <td>Room</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Rooms.Any())
+            {
+                <tr>
+                    @foreach (var room in Model.Rooms)
+                    {
+                        <td>
+                            @Html.Partial("_RoomDetails.cshtml", room)
+                        </td>
+                        <td>
+                            <a asp-action="Book"
+                                asp-controller="Hotel"
+                                asp-route-hotelId="@room.HotelId" 
+                                asp-route-roomId="@room.RoomId"
+                                class="btn btn-info">Book</a>
+                        </td>
+                    }
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    No rooms available
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    @if (User.IsInRole(Roles.Admin.ToString()))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.HotelId" >Edit</a>
+        <br /> 
+        <a asp-action="Delete" asp-route-id="@Model.HotelId" >Delete</a>
+        <br />
+    }
+    <a asp-action="Index">Back to List</a>
+</div>
