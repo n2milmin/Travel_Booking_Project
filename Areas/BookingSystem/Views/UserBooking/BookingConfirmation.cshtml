@@ -1,0 +1,54 @@
+﻿@model Booking
+@{
+	ViewData["Title"] = "Booking Confirmation";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+	<h3>Thank you for your booking! </h3>
+	<p>Your booking reference number is: <b>@Model.BookingId</b></p>
+	<hr />
+	<h4>Booking Details</h4>
+	
+	@if (Model.ServiceId == 1)
+	{
+		@Html.Partial("_CarDetails.cshtml", Model)
+	}
+	else if (Model.ServiceId == 2)
+	{ 
+		<div class="row">
+			<div class="col-md-6">
+				@Html.Partial("_FlightDetails.cshtml", Model)
+			</div>
+			<div class="col-md-6">
+				@foreach (var seat in Model.Seats)
+				{
+					@Html.Partial("_SeatDetails.cshtml", seat)
+				}
+			</div>
+		</div>
+	}
+	else if (Model.ServiceId == 3)
+	{
+		<div class="row">
+			<div class="col-md-6">
+				@Html.Partial("_HotelDetails.cshtml", Model)
+			</div>
+			<div class="col-md-6">
+				@foreach (var room in Model.Rooms)
+				{
+					@Html.Partial("_RoomDetails.cshtml", room)
+				}
+			</div>
+		</div>
+	}
+	else
+	{
+		<p>An error occured. Please try reloading the page.</p>
+	}
+</div>
+
+<div>
+	<a asp-area="/" asp-controller="Home" asp-action="Index"> Home </a>
+</div>

@@ -129,7 +129,8 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
                 await _db.SaveChangesAsync();
                 return RedirectToAction("SuccessfulBooking");
             }
-            return View(booking);
+            return View("BookingConfirmation", booking);
         }
+
     }
 }
