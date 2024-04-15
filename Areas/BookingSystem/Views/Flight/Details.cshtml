@@ -24,28 +24,31 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                @if (Model.Seats.Any())
+            @if (Model.Seats.Any())
+            {
+                @foreach (var seat in Model.Seats)
                 {
-                    @foreach (var seat in Model.Seats)
-                    {
-                        <td>
-                            @Html.Partial("_SeatDetails.cshtml", seat)
-                        </td>
-                        <td>
-                            <a asp-action="Book"
-                               asp-controller="Flight"
-                               asp-route-flightId="@Model.FlightId"
-                               asp-route-seatId="@seat.SeatId"
-                               class="btn btn-info">Book</a>
-                        </td>
-                    }
+                <tr>
+                    <td>
+                        @Html.Partial("_SeatDetails.cshtml", seat)
+                    </td>
+                    <td>
+                        <a asp-controller="Flight"
+                            asp-action="Book"
+                            asp-route-flightId="@Model.FlightId"
+                            asp-route-seatId="@seat.SeatId"
+                            class="btn btn-info">Book</a>
+                    </td>
+                </tr>
                 }
-                else
-                {
-                    <p>No rooms available</p>
-                }
-            </tr>
+            }
+            else
+            {
+                <tr>
+                        <td>No rooms available</td>
+                    
+                </tr>
+            }
         </tbody>
     </table>
 </div>

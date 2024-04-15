@@ -12,6 +12,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using GBC_Travel_Group_136.Areas.BookingSystem.Models;
+using GBC_Travel_Group_136.Enum;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -72,6 +73,10 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [Display(Name = "Role")]
+            public string Role { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [Display(Name = "First Name")]
@@ -143,8 +148,14 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    result = await _userManager.AddToRoleAsync(user, Input.Role);
 
+                    _logger.LogInformation("User created a new account with password.");
+                    
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("", "Cannot add user to roles.");
+                    }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

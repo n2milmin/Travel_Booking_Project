@@ -25,19 +25,18 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		}
 
 
-        [HttpGet("BookFlight/{flightId:int}/{seatId:int}")]
+        [HttpGet("Book/{flightId:int}/{seatId:int}")]
         public async Task<IActionResult> Book(int flightId, int seatId)
         {
-            var flight = await _db.Flights
-                .Include(s => s.Seats.Where(s => s.SeatId == seatId))
-                .FirstOrDefaultAsync(f => f.FlightId == flightId);
+            TempData["FlightId"] = flightId;
+            TempData["SeatId"] = seatId;
 
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("BookFlight", "UserBooking", flight);
+                return RedirectToAction("BookFlight", "UserBooking");
             }
 
-            return View("FlightBookingOptions", flight);
+            return View("FlightBookingOptions");
         }
 
 

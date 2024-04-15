@@ -26,9 +26,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
 
 
 		public Flight? Flight { get; set; }
-		public List<Seat>? Seats { get; set; }
+		public Seat? Seats { get; set; }
 		public Hotel? Hotel { get; set; }
-		public List<Room>? Rooms { get; set; }
+		public Room? Rooms { get; set; }
 		public Car? Car { get; set; }
 	}
 }

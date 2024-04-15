@@ -1,5 +1,4 @@
-﻿@model Hotel
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
 
@@ -8,11 +7,10 @@
     <a class="btn btn-primary"
        asp-area="Identity"
        asp-page="/Account/Login"
-       asp-route-returnUrl="@Url.Action("BookHotel", "UserBooking", Model.HotelId)">Sign In</a>
+       asp-route-returnUrl="@Url.Action("BookHotel", "UserBooking")">Sign In</a>
 
     <a class="btn btn-primary"
        asp-area="BookingSystem"
        asp-controller="GuestBooking"
-       asp-action="BookHotel"
-       asp-route-id="@Model.HotelId">Continue as Guest</a>
+       asp-action="BookHotel">Continue as Guest</a>
 </div>

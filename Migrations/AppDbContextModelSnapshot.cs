@@ -128,6 +128,18 @@ namespace GBC_Travel_Group_136.Migrations
                     b.Property<int>("NumberOfGuests")
                         .HasColumnType("int");
 
+                    b.Property<int>("NumberOfRooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoomsRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SeatsSeatId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
@@ -141,6 +153,10 @@ namespace GBC_Travel_Group_136.Migrations
                     b.HasIndex("FlightId");
 
                     b.HasIndex("HotelId");
+
+                    b.HasIndex("RoomsRoomId");
+
+                    b.HasIndex("SeatsSeatId");
 
                     b.ToTable("Bookings", "Identity");
                 });
@@ -244,8 +260,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 1,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 12, 17, 58, 7, 862, DateTimeKind.Local).AddTicks(7490),
-                            Departure = new DateTime(2024, 4, 12, 17, 58, 7, 862, DateTimeKind.Local).AddTicks(7440),
+                            Arrival = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2695),
+                            Departure = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2647),
                             Destination = "Vancouver",
                             Origin = "Toronto"
                         },
@@ -253,8 +269,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 2,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 12, 17, 58, 7, 862, DateTimeKind.Local).AddTicks(7505),
-                            Departure = new DateTime(2024, 4, 12, 17, 58, 7, 862, DateTimeKind.Local).AddTicks(7504),
+                            Arrival = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2712),
+                            Departure = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2711),
                             Destination = "Toronto",
                             Origin = "Vancouver"
                         });
@@ -315,9 +331,6 @@ namespace GBC_Travel_Group_136.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -335,8 +348,6 @@ namespace GBC_Travel_Group_136.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("RoomId");
-
-                    b.HasIndex("BookingId");
 
                     b.HasIndex("HotelId");
 
@@ -392,9 +403,6 @@ namespace GBC_Travel_Group_136.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
                     b.Property<int>("FlightId")
                         .HasColumnType("int");
 
@@ -407,8 +415,6 @@ namespace GBC_Travel_Group_136.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("SeatId");
-
-                    b.HasIndex("BookingId");
 
                     b.HasIndex("FlightId");
 
@@ -612,19 +618,27 @@ namespace GBC_Travel_Group_136.Migrations
                         .WithMany()
                         .HasForeignKey("HotelId");
 
+                    b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Room", "Rooms")
+                        .WithMany()
+                        .HasForeignKey("RoomsRoomId");
+
+                    b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Seat", "Seats")
+                        .WithMany()
+                        .HasForeignKey("SeatsSeatId");
+
                     b.Navigation("Car");
 
                     b.Navigation("Flight");
 
                     b.Navigation("Hotel");
+
+                    b.Navigation("Rooms");
+
+                    b.Navigation("Seats");
                 });
 
             modelBuilder.Entity("GBC_Travel_Group_136.Areas.BookingSystem.Models.Room", b =>
                 {
-                    b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Booking", null)
-                        .WithMany("Rooms")
-                        .HasForeignKey("BookingId");
-
                     b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Hotel", null)
                         .WithMany("Rooms")
                         .HasForeignKey("HotelId")
@@ -634,10 +648,6 @@ namespace GBC_Travel_Group_136.Migrations
 
             modelBuilder.Entity("GBC_Travel_Group_136.Areas.BookingSystem.Models.Seat", b =>
                 {
-                    b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Booking", null)
-                        .WithMany("Seats")
-                        .HasForeignKey("BookingId");
-
                     b.HasOne("GBC_Travel_Group_136.Areas.BookingSystem.Models.Flight", null)
                         .WithMany("Seats")
                         .HasForeignKey("FlightId")
@@ -694,13 +704,6 @@ namespace GBC_Travel_Group_136.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GBC_Travel_Group_136.Areas.BookingSystem.Models.Booking", b =>
-                {
-                    b.Navigation("Rooms");
-
-                    b.Navigation("Seats");
                 });
 
             modelBuilder.Entity("GBC_Travel_Group_136.Areas.BookingSystem.Models.Flight", b =>

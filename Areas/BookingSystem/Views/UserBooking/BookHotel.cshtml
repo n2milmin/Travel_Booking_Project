@@ -1,12 +1,13 @@
 ﻿@model Booking
 @{
-    ViewData["Title"] = "Book a Hotel";
+    ViewData["Title"] = "Book a Hotel Room";
 }
 
 <h1>@ViewData["Title"]</h1>
 <hr />
-@Html.Partial("_HotelDetails.cshtml", Model.Hotel)
-@Html.Partial("_RoomDetails.cshtml", Model.Hotel.Rooms)
+@Html.Partial("../Hotel/_HotelDetails.cshtml", Model.Hotel)
+
+@Html.Partial("../Hotel/_RoomDetails.cshtml", Model.Hotel.Rooms[0])
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -27,7 +28,7 @@
                 </div>
             </form>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" asp-action="BookHotel" />
                 <a asp-action="Index" class="btn btn-warning">Cancel</a>
             </div>
         </div>

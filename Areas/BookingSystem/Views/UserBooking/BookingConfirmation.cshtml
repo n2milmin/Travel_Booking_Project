@@ -22,10 +22,7 @@
 				@Html.Partial("_FlightDetails.cshtml", Model)
 			</div>
 			<div class="col-md-6">
-				@foreach (var seat in Model.Seats)
-				{
-					@Html.Partial("_SeatDetails.cshtml", seat)
-				}
+				@Html.Partial("_SeatDetails.cshtml", Model.Seats)
 			</div>
 		</div>
 	}
@@ -36,10 +33,7 @@
 				@Html.Partial("_HotelDetails.cshtml", Model)
 			</div>
 			<div class="col-md-6">
-				@foreach (var room in Model.Rooms)
-				{
-					@Html.Partial("_RoomDetails.cshtml", room)
-				}
+				@Html.Partial("_RoomDetails.cshtml", Model.Rooms)
 			</div>
 		</div>
 	}

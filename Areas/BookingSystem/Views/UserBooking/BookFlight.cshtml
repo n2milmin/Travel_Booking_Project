@@ -5,8 +5,8 @@
 
 <h1>@ViewData["Title"]</h1>
 <hr />
-@Html.Partial("_FlightDetails.cshtml", Model.Flight)
-@Html.Partial("_SeatDetails.cshtml", Model.Flight.Seats)
+@Html.Partial("../Flight/_FlightDetails.cshtml", Model.Flight)
+@Html.Partial("../Flight/_SeatDetails.cshtml", Model.Flight.Seats)
 <hr />
 <div class="row">
     <div class="col-md-4">

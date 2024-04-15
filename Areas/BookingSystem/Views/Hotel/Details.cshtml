@@ -19,28 +19,28 @@
     <table>
         <thead>
             <tr>
-                <td>Room</td>
+                <td></td>
                 <td></td>
             </tr>
         </thead>
         <tbody>
             @if (Model.Rooms.Any())
             {
-                <tr>
-                    @foreach (var room in Model.Rooms)
-                    {
+                @foreach (var room in Model.Rooms)
+                {
+                    <tr>
                         <td>
                             @Html.Partial("_RoomDetails.cshtml", room)
                         </td>
                         <td>
-                            <a asp-action="Book"
-                                asp-controller="Hotel"
+                            <a asp-controller="Hotel"
+                                asp-action="Book"
                                 asp-route-hotelId="@room.HotelId" 
                                 asp-route-roomId="@room.RoomId"
                                 class="btn btn-info">Book</a>
                         </td>
-                    }
-                </tr>
+                    </tr>
+                }
             }
             else
             {

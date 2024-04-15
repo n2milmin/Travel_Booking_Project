@@ -24,17 +24,17 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         }
 
 
-		[HttpGet("BookCar/{carId:int}")]
+		[HttpGet("Book/{carId:int}")]
 		public async Task<IActionResult> Book(int carId)
 		{
-			var car = await _db.Cars.FindAsync(carId);
+            TempData["CarId"] = carId;
 
-			if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
 			{
-				return RedirectToAction("BookCar", "UserBooking", car);
+				return RedirectToAction("BookCar", "UserBooking");
 			}
 
-			return View("CarBookingOptions", car);
+			return View("CarBookingOptions");
 		}
 
 

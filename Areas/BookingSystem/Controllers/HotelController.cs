@@ -1,7 +1,10 @@
 ﻿using GBC_Travel_Group_136.Areas.BookingSystem.Models;
 using GBC_Travel_Group_136.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using GBC_Travel_Group_136.Areas.Identity;
 
 namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 {
@@ -23,19 +26,18 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		}
 
 
-        [HttpGet("BookHotel/{hotelId:int}/{roomId:int}")]
+        [HttpGet("Book/{hotelId:int}/{roomId:int}")]
         public async Task<IActionResult> Book(int hotelId, int roomId)
         {
-            var hotel = await _db.Hotels
-                .Include(r => r.Rooms.Where(r => r.RoomId == roomId))
-                .FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            TempData["HotelId"] = hotelId;
+            TempData["RoomId"] = roomId;
 
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("BookHotel", "UserBooking", hotel);
+                return RedirectToAction("BookHotel", "UserBooking");
             }
 
-            return View("HotelBookingOptions", hotel);
+            return View("HotelBookingOptions");
         }
 
 
