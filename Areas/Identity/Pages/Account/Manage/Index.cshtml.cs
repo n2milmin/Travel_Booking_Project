@@ -39,6 +39,9 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
+        [TempData]
+        public string UserNameChangeLimitMessage { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -52,12 +55,12 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-			/// <summary>
-			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-			///     directly from your code. This API may change or be removed in future releases.
-			/// </summary>
-			[Display(Name = "Userame")]
-			public string UserName { get; set; }
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Display(Name = "Userame")]
+            public string UserName { get; set; }
 
 			[Display(Name = "First Name")]
 			public string FirstName { get; set; }
@@ -72,7 +75,11 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-		}
+
+            [Display(Name = "Profile Picture")]
+            public byte[] ProfilePicture { get; set; }
+
+        }
 
         private async Task LoadAsync(ApplicationUser user)
         {
@@ -80,16 +87,18 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 			var firstName = user.FirstName;
 			var lastName = user.LastName;
+            var profilePicture = user.ProfilePicture;
 
-			Username = userName;
+            Username = userName;
 
             Input = new InputModel
             {
 				UserName = userName,
 				FirstName = firstName,
 				LastName = lastName,
-                PhoneNumber = phoneNumber
-			};
+                PhoneNumber = phoneNumber,
+                ProfilePicture = profilePicture,
+            };
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -141,22 +150,48 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-			if (Input.UserName != user.UserName)
-			{
-				var userNameExists = await _userManager.FindByNameAsync(Input.UserName);
-				if (userNameExists != null)
-				{
-					StatusMessage = "Error: username already taken. Please choose a different username.";
-					return RedirectToPage();
-				}
-				else
-				{
-					user.UserName = Input.UserName;
-					await _userManager.UpdateAsync(user);
-				}
-			}
+            if (user.UsernameChangeLimit > 0)
+            {
+                if (Input.UserName != user.UserName)
+                {
+                    var userNameExists = await _userManager.FindByNameAsync(Input.UserName);
 
-			await _signInManager.RefreshSignInAsync(user);
+                    if (userNameExists != null)
+                    {
+                        StatusMessage = "Error: username already taken. Please choose a different username.";
+                        return RedirectToPage();
+                    }
+
+                    var setUserName = await _userManager.SetUserNameAsync(user, Input.UserName);
+
+                    if (userNameExists != null)
+                    {
+                        StatusMessage = "Unexpected error when trying to set user name";
+                        return RedirectToPage();
+                    }
+                    else
+                    {
+                        user.UserName = Input.UserName;
+                        user.UsernameChangeLimit -= 1;
+                        await _userManager.UpdateAsync(user);
+                    }
+
+                    UserNameChangeLimitMessage = $"You can change your username {user.UsernameChangeLimit} more times";
+                }
+            }
+
+            if (Request.Form.Files.Count > 0)
+            {
+                IFormFile file = Request.Form.Files.FirstOrDefault();
+                using (var dataStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(dataStream);
+                    user.ProfilePicture = dataStream.ToArray();
+                }
+                await _userManager.UpdateAsync(user);
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }

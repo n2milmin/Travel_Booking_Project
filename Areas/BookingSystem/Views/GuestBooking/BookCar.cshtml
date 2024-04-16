@@ -1,30 +1,24 @@
 ﻿@model Booking
 @{
-    ViewData["Title"] = "Book a Flight";
+    ViewData["Title"] = "Book a Car";
 }
 
 <h1>@ViewData["Title"]</h1>
 <hr />
-@Html.Partial("../Flight/_FlightDetails.cshtml", Model.Flight)
-@Html.Partial("../Flight/_SeatDetails.cshtml", Model.Flight.Seats)
+@Html.Partial("../Car/_CarDetails.cshtml", Model.Car)
 <hr />
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <form asp-action="BookFlight">
+            <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="CheckInDate" class="control-label">Check in date</label>
-                    <input asp-for="CheckInDate" class="form-control" />
-                    <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                    @Html.LabelFor(model => model.CheckInDate)
+                    @Html.TextBoxFor(model => model.CheckInDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.CheckOutDate)
                     @Html.TextBoxFor(model => model.CheckOutDate, "{0:MM/dd/yyyy}", new { @class = "form-control datepicker" })
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.NumberOfSeats)
-                    @Html.DropDownListFor(model => model.NumberOfSeats, Enumerable.Range(1, Model.Flight.Seats[0].Amount).Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString() }), "Select Number of Rooms", new { @class = "form-control" })
                 </div>
             </form>
             <div class="form-group">

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GBC_Travel_Group_136.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240415163147_InitialCreate")]
+    [Migration("20240415164613_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -75,6 +75,9 @@ namespace GBC_Travel_Group_136.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -263,8 +266,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 1,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2695),
-                            Departure = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2647),
+                            Arrival = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6363),
+                            Departure = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6322),
                             Destination = "Vancouver",
                             Origin = "Toronto"
                         },
@@ -272,8 +275,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 2,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2712),
-                            Departure = new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2711),
+                            Arrival = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6382),
+                            Departure = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6381),
                             Destination = "Toronto",
                             Origin = "Vancouver"
                         });

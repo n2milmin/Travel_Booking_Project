@@ -4,6 +4,9 @@ using GBC_Travel_Group_136.Areas.BookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using GBC_Travel_Group_136.Enum;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using GBC_Travel_Group_136.Areas.Identity.Pages.Account;
+using GBC_Travel_Group_136.Filters;
 
 namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 {
@@ -11,22 +14,29 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 	[Route("[area]/[controller]/[action]")]
     public class CarController : Controller
     {
-        private readonly AppDbContext _db;		 
-        public CarController(AppDbContext context)
+        private readonly AppDbContext _db;
+        private readonly ILogger<CarController> _logger;
+
+        public CarController(AppDbContext context, ILogger<CarController> logger)
         {
             _db = context;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation($"Viewing Cars list");
+
             var car = await _db.Cars.ToListAsync();
             return View(car);
         }
 
 
 		[HttpGet("Book/{carId:int}")]
-		public async Task<IActionResult> Book(int carId)
+		public IActionResult Book(int carId)
 		{
+            _logger.LogInformation($"Starting booking a car with id: {carId}");
+
             TempData["CarId"] = carId;
 
             if (User.Identity.IsAuthenticated)
@@ -41,7 +51,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id)
 		{
-			var car = await _db.Cars.FirstOrDefaultAsync(f => f.CarId == id);
+            _logger.LogInformation($"Viewing details of Car with id: {id}");
+
+            var car = await _db.Cars.FirstOrDefaultAsync(f => f.CarId == id);
 
 			if (car == null)
 			{
@@ -53,19 +65,23 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Create")]
 		public IActionResult Create()
 		{
+            _logger.LogInformation($"Creating a car");
 
-			return View();
+            return View();
 		}
 
 		[HttpPost("Create")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(Car car)
 		{
-			if (ModelState.IsValid)
+            if (ModelState.IsValid)
 			{
 				_db.Cars.Add(car);
 				await _db.SaveChangesAsync();
-				return RedirectToAction("Index");
+
+                _logger.LogInformation($"Finished creating car, new id: {car.CarId}");
+
+                return RedirectToAction("Index");
 			}
 			return View(car);
 		}
@@ -73,7 +89,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Edit/{id:int}")]
 		public async Task<IActionResult> Edit(int id)
 		{
-			var car = await _db.Cars.FindAsync(id);
+            _logger.LogInformation($"Started editing car with id: {id}");
+
+            var car = await _db.Cars.FindAsync(id);
 			if (car == null)
 			{
 				return NotFound();
@@ -84,7 +102,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, [Bind("CarId, Company, Location, Make, Model, Price, Available")] Car car)
 		{
-			if (id != car.CarId)
+            _logger.LogInformation($"Finished editing car with id: {id}");
+
+            if (id != car.CarId)
 			{
 				return NotFound();
 			}
@@ -98,7 +118,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!await FlightExists(car.CarId))
+					if (!await CarExists(car.CarId))
 					{
 						return NotFound(car);
 					}
@@ -110,7 +130,7 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 			return View(car);
 		}
 
-		private async Task<bool> FlightExists(int id)
+		private async Task<bool> CarExists(int id)
 		{
 			return await _db.Cars.AnyAsync(p => p.CarId == id);
 		}
@@ -118,7 +138,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Delete/{id:int}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var car = await _db.Cars.FirstOrDefaultAsync(p => p.CarId == id);
+            _logger.LogInformation($"starting delete process for car with id: {id}");
+
+            var car = await _db.Cars.FirstOrDefaultAsync(p => p.CarId == id);
 			if (car == null)
 			{
 				return NotFound();
@@ -129,7 +151,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int carId)
 		{
-			var car = _db.Cars.Find(carId);
+            _logger.LogInformation($"Deleting car with id: {carId}");
+
+            var car = _db.Cars.Find(carId);
 			if (car != null)
 			{
 				_db.Cars.Remove(car);
@@ -143,7 +167,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Search/{searchString?}")]
 		public async Task<IActionResult> Search(string searchString)
 		{
-			var carsQuery = from p in _db.Cars
+            _logger.LogInformation($"User searched for: {searchString}");
+
+            var carsQuery = from p in _db.Cars
 								select p;
 
 			bool searchPerformed = !string.IsNullOrEmpty(searchString);

@@ -3,6 +3,7 @@ using GBC_Travel_Group_136.Areas.BookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using GBC_Travel_Group_136.Filters;
 
 namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 {
@@ -11,16 +12,20 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 	public class FlightController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ILogger<FlightController> _logger;
 
-        public FlightController(AppDbContext context)
+        public FlightController(AppDbContext context, ILogger<FlightController> logger)
         {
             _db = context;
+			_logger = logger;
         }
 
 		[HttpGet("")]
 		public async Task<IActionResult> Index()
 		{
-			var flights = await _db.Flights.ToListAsync();
+            _logger.LogInformation($"Viewing Flight list");
+
+            var flights = await _db.Flights.ToListAsync();
 			return View(flights);
 		}
 
@@ -28,6 +33,8 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         [HttpGet("Book/{flightId:int}/{seatId:int}")]
         public async Task<IActionResult> Book(int flightId, int seatId)
         {
+            _logger.LogInformation($"Starting booking a Flight {flightId} Seat {seatId}");
+
             TempData["FlightId"] = flightId;
             TempData["SeatId"] = seatId;
 
@@ -44,7 +51,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         [HttpGet("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id)
 		{
-			var flights = await _db.Flights
+            _logger.LogInformation($"Viewing details of Flight : {id}");
+
+            var flights = await _db.Flights
 				.Include(s => s.Seats)
 				.FirstOrDefaultAsync(f => f.FlightId == id);
 
@@ -59,15 +68,18 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Create")]
 		public IActionResult Create()
 		{
+            _logger.LogInformation($"Start Creating a Flight");
 
-			return View();
+            return View();
 		}
 
 		[HttpPost("Create")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(Flight flight)
 		{
-			if (ModelState.IsValid)
+            _logger.LogInformation($"Finished creating flight : {flight.FlightId}");
+
+            if (ModelState.IsValid)
 			{
 				_db.Flights.Add(flight);
 				await _db.SaveChangesAsync();
@@ -79,7 +91,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Edit/{id:int}")]
 		public async Task<IActionResult> Edit(int id)
 		{
-			var flight = await _db.Flights.FindAsync(id);
+            _logger.LogInformation($"Starting edditing a flight with id: {id}");
+
+            var flight = await _db.Flights.FindAsync(id);
 			if (flight == null)
 			{
 				return NotFound();
@@ -90,7 +104,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, [Bind("FlightId, Airline, Origin, Destination, Departure, Arrival")] Flight flight)
 		{
-			if (id != flight.FlightId)
+            _logger.LogInformation($"Finished editing a car with id: {id}");
+
+            if (id != flight.FlightId)
 			{
 				return NotFound();
 			}
@@ -124,7 +140,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Delete/{id:int}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var flight = await _db.Flights.FirstOrDefaultAsync(p => p.FlightId == id);
+            _logger.LogInformation($"Starting deleting a flight with id: {id}");
+
+            var flight = await _db.Flights.FirstOrDefaultAsync(p => p.FlightId == id);
 			if (flight == null)
 			{
 				return NotFound();
@@ -135,7 +153,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int FlightId)
 		{
-			var flight = _db.Flights.Find(FlightId);
+            _logger.LogInformation($"Finished deleting flight with id: {FlightId}");
+
+            var flight = _db.Flights.Find(FlightId);
 			if (flight != null)
 			{
 				_db.Flights.Remove(flight);
@@ -147,9 +167,11 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		}
 
 		[HttpGet("Search/{searchType}/{searchString?}")]
-		public async Task<IActionResult> Search(string searchString, string searchType)
+		public async Task<IActionResult> Search(string searchString)
 		{
-			var projectsQuery = from p in _db.Flights
+            _logger.LogInformation($"Searching flights : {searchString}");
+
+            var projectsQuery = from p in _db.Flights
 								select p;
 
 			bool searchPerformed = !string.IsNullOrEmpty(searchString);
@@ -161,24 +183,29 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 											   || f.Destination.Contains(searchString));
 			}
 
-			var projects = await projectsQuery.ToListAsync();
+			var flights = await projectsQuery.ToListAsync();
 			ViewData["SearchPerformed"] = searchPerformed;
 			ViewData["SearchString"] = searchString;
-			return View("Index", projects); // Reuse the Index view to display results
+            _logger.LogInformation($"Result : {flights}");
+            return View("Index", flights); // Reuse the Index view to display results
 		}
 
 		[HttpGet("Search/{flightId:int}/{searchString?}")]
 		public async Task<IActionResult> Search(int flightId, string searchString)
 		{
-			var seatsQuery = _db.Seats.AsQueryable();
+            _logger.LogInformation($"Searching flights : {searchString}");
+
+            var seatsQuery = _db.Seats.AsQueryable();
 			if (!string.IsNullOrEmpty(searchString))
 			{
 				seatsQuery = seatsQuery
 					.Where(t => t.SeatType.Contains(searchString));
 			}
 			var tasks = await seatsQuery.ToListAsync();
-			ViewBag.ProjectId = flightId;
-			return View("Index", tasks);
+			ViewBag.FlightId = flightId;
+            _logger.LogInformation($"Searching result : {flightId}");
+
+            return View("Index", tasks);
 		}
 	}
 }

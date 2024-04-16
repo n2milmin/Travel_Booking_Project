@@ -93,6 +93,7 @@ namespace GBC_Travel_Group_136.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UsernameChangeLimit = table.Column<int>(type: "int", nullable: false),
+                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -351,8 +352,8 @@ namespace GBC_Travel_Group_136.Migrations
                 columns: new[] { "FlightId", "Airline", "Arrival", "Departure", "Destination", "Origin" },
                 values: new object[,]
                 {
-                    { 1, "Air Canada", new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2695), new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2647), "Vancouver", "Toronto" },
-                    { 2, "Air Canada", new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2712), new DateTime(2024, 4, 15, 12, 31, 46, 757, DateTimeKind.Local).AddTicks(2711), "Toronto", "Vancouver" }
+                    { 1, "Air Canada", new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6363), new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6322), "Vancouver", "Toronto" },
+                    { 2, "Air Canada", new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6382), new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6381), "Toronto", "Vancouver" }
                 });
 
             migrationBuilder.InsertData(

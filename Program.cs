@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using GBC_Travel_Group_136.Services;
+using Serilog;
+using GBC_Travel_Group_136.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +25,15 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
+
+builder.Host.UseSerilog((hostContext, services, configuration) =>
+{
+    configuration.ReadFrom.Configuration(hostContext.Configuration);
+});
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddSession();
+
 
 var app = builder.Build();
 
@@ -58,6 +67,9 @@ catch (Exception e)
     logger.LogError(e, "An error occurred seeding the roles for the system.");
 }
 
+app.UseMiddleware<LoggingMiddleware>();
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -68,18 +80,27 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.MapControllerRoute(
-	name: "areas",
-	pattern: "{area:exists}/{controller=Car}/{action=Index}/{id?}");
-app.MapControllerRoute(
-	name: "areas",
-	pattern: "{area:exists}/{controller=Hotel}/{action=Index}/{id?}");
-app.MapControllerRoute(
-	name: "areas",
-	pattern: "{area:exists}/{controller=Flight}/{action=Index}/{id?}");
+app.UseSession();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}");
+
+    endpoints.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Car}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Hotel}/{action=Index}/{id?}");
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Flight}/{action=Index}/{id?}");
+
+    // Enable attribute routing
+    endpoints.MapControllers();
+});
+
 
 app.Run();

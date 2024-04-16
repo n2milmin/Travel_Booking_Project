@@ -11,7 +11,7 @@
             asp-route-returnUrl="@Url.Action("BookCar", "UserBooking")">Sign In</a>
     
         <a class="btn btn-primary" 
-            asp-area="BookingSystem" 
-            asp-controller="GuestBooking"
-            asp-action="BookCar" >Continue as Guest</a>
+            asp-area="Identity" 
+            asp-page="/Account/GuestRegister"
+            asp-route-returnUrl="@Url.Action("BookCar", "GuestBooking")">Continue as Guest</a>
     </div>

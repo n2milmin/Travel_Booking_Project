@@ -9,7 +9,8 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BookingId { get; set; }
 		[Required]
-		public int UserId { get; set; }
+		[DataType("nvarchar(450)")]
+		public string UserId { get; set; }
 		[Required]
 		public int ServiceId { get; set; }
 		[Required]

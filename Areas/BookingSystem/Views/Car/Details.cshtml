@@ -21,10 +21,17 @@
         <tbody>
             <tr>
                 <td>
-                    <a asp-action="Book"
-                        asp-controller="Car"
-                        asp-route-carId="@Model.CarId" 
-                        class="btn btn-info">Book</a>
+                    @if (Model.Available)
+                    {
+                        <a asp-action="Book"
+                           asp-controller="Car"
+                           asp-route-carId="@Model.CarId"
+                            class="btn btn-info">Book</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-info">Unavailable</a>
+                    }
                 </td>
             </tr>
         </tbody>

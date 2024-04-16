@@ -46,8 +46,8 @@
 							}
 						</div>
 					<td>
-						<a asp-area="BookingSystem" asp-action="Details" asp-route-id="@h.CarId" class="btn btn-info">Details</a>
-						<a asp-area="BookingSystem" asp-action="BookCar" asp-route-id="@h.CarId" class="btn btn-info">Book</a>
+						<a asp-action="Details" asp-route-id="@h.CarId" class="btn btn-info">Details</a>
+						<a asp-action="Book" asp-route-carId="@h.CarId" class="btn btn-info">Book</a>
 						@if (User.IsInRole(Roles.Admin.ToString()))
 						{
 							<a asp-area="BookingSystem" asp-action="Edit" asp-route-id="@h.CarId" class="btn btn-secondary">Edit</a>

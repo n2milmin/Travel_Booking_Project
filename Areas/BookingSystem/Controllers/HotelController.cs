@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using GBC_Travel_Group_136.Areas.Identity;
+using GBC_Travel_Group_136.Filters;
 
 namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 {
@@ -13,13 +14,17 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 	public class HotelController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ILogger<HotelController> _logger;
 
-        public HotelController(AppDbContext context)
+        public HotelController(AppDbContext context, ILogger<HotelController> logger)
         {
             _db = context;
+            _logger = logger;
         }
         public async Task<IActionResult> Index(string searchString, string searchType)
         {
+            _logger.LogInformation($"Viewing hotel list");
+
             var hotel = await _db.Hotels.ToListAsync();
 
 			return View(hotel);
@@ -44,7 +49,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         [HttpGet("Details/{id:int}")]
 		public async Task<IActionResult> Details(int id)
 		{
-			var hotel = await _db.Hotels
+            _logger.LogInformation($"Viewing details of Hotel with id: {id}");
+
+            var hotel = await _db.Hotels
 				.Include(h => h.Rooms)
 				.FirstOrDefaultAsync(f => f.HotelId == id);
 			
@@ -60,8 +67,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Create")]
 		public IActionResult Create()
 		{
+            _logger.LogInformation($"Creating a hotel");
 
-			return View();
+            return View();
 		}
 
 		[HttpPost("Create")]
@@ -72,7 +80,10 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 			{
 				_db.Hotels.Add(hotel);
 				await _db.SaveChangesAsync();
-				return RedirectToAction("Index");
+
+                _logger.LogInformation($"Finished creating hotel, new id: {hotel.HotelId}");
+
+                return RedirectToAction("Index");
 			}
 			return View(hotel);
 		}
@@ -81,7 +92,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Edit/{id:int}")]
 		public async Task<IActionResult> Edit(int id)
 		{
-			var hotel = await _db.Hotels.FindAsync(id);
+            _logger.LogInformation($"Staring editing hotel with id: {id}");
+
+            var hotel = await _db.Hotels.FindAsync(id);
 			if (hotel == null)
 			{
 				return NotFound();
@@ -103,8 +116,11 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 				{
 					_db.Update(hotel);
 					await _db.SaveChangesAsync();
-				}
-				catch (DbUpdateConcurrencyException)
+
+                    _logger.LogInformation($"Finished editing hotel with id: {id}");
+
+                }
+                catch (DbUpdateConcurrencyException)
 				{
 					if (!await HotelExists(hotel.HotelId))
 					{
@@ -133,7 +149,10 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 			{
 				return NotFound();
 			}
-			return View(hotel);
+
+            _logger.LogInformation($"Staring deleting hotel with id: {id}");
+
+            return View(hotel);
 		}
 		[HttpPost("DeleteConfirmed/{hotelid:int}")]
 		[ValidateAntiForgeryToken]
@@ -144,7 +163,10 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 			{
 				_db.Flights.Remove(hotel);
 				await _db.SaveChangesAsync();
-				return RedirectToAction(nameof(Index));
+
+                _logger.LogInformation($"Finished deleting hotel with id: {hotelId}");
+
+                return RedirectToAction(nameof(Index));
 			}
 
 			return NotFound();
@@ -155,7 +177,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 		[HttpGet("Search/{searchString?}")]
 		public async Task<IActionResult> Search(string searchString)
 		{
-			var hotelQuery = from p in _db.Hotels
+            _logger.LogInformation($"Hotel search {searchString}");
+
+            var hotelQuery = from p in _db.Hotels
 								select p;
 
 			bool searchPerformed = !string.IsNullOrEmpty(searchString);
@@ -167,14 +191,14 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 											   || f.Description.Contains(searchString));
 			}
 
-			var projects = await hotelQuery.ToListAsync();
+			var results = await hotelQuery.ToListAsync();
 			ViewData["SearchPerformed"] = searchPerformed;
 			ViewData["SearchString"] = searchString;
-			return View("Index", projects); // Reuse the Index view to display results
+			return View("Index", results); // Reuse the Index view to display results
 		}
 
-		[HttpGet("Search/{hotelId:int}/{searchString?}")]
-		public async Task<IActionResult> Search(int hotelId, string searchString)
+		[HttpGet("Search/{roomId:int}/{searchString?}")]
+		public async Task<IActionResult> Search(int roomId, string searchString)
 		{
 			var roomsQuery = _db.Rooms.AsQueryable();
 			if (!string.IsNullOrEmpty(searchString))
@@ -182,9 +206,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
 				roomsQuery = roomsQuery
 					.Where(t => t.RoomType.Contains(searchString));
 			}
-			var tasks = await roomsQuery.ToListAsync();
-			ViewBag.ProjectId = hotelId;
-			return View("Index", tasks);
+			var results = await roomsQuery.ToListAsync();
+			ViewBag.RoomId = roomId;
+			return View("Index", results);
 		}
 	}
 }
