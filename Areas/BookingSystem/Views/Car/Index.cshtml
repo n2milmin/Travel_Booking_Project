@@ -8,10 +8,14 @@
 	// Search parameters
 	bool searchPerformed = ViewData["SearchPerformed"] as bool? ?? false;
 	string searchString = ViewData["SearchString"] as string;
-	string searchType = ViewData["SearchType"] as string;
 }
 
 <h1>@ViewData["Title"]</h1>
+
+@if (searchPerformed)
+{
+	<h4>Search results for: @searchString</h4>
+}
 
 <!-- search bar -->
 @if (Model.Any())

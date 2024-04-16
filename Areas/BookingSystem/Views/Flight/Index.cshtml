@@ -12,6 +12,10 @@
 
 <h1>@ViewData["Title"]</h1>
 
+@if (searchPerformed)
+{
+	<h4>Search results for: @searchString</h4>
+}
 
 @if (Model.Any())
 {
