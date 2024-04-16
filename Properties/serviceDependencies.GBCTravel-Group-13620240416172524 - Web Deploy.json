@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/GBCTravel-Group-13620240416172524/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsMyRemoteTravelGroupConn_2515BCEFC2",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/travel-group/databases/TravelGroup",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:MyRemoteTravelGroupConnectionString"
+    }
+  }
+}

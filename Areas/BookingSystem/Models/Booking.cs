@@ -14,10 +14,6 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Models
 		[DataType("nvarchar(450)")]
 		public string UserId { get; set; }
 
-		[EmailAddress]
-		[Display(Name = "Email Address")]
-		public string Email { get; set; }
-
 		[Required]
 		[Display(Name = "Service Id")]
 		public int ServiceId { get; set; }

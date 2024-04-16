@@ -62,16 +62,13 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
             }
 
             Booking result = new Booking();
-            result.UserId = userId;
-            result.Email = user.Email;
             result.ServiceId = 1;
             result.BookingDate = DateTime.Now;
             result.Car = car;
 
-            _logger.LogInformation($"Sending new booking to booking page");
+            _logger.LogInformation($"Booking made {result.BookingId}");
 
             return View(result);
-
         }
 
         [HttpPost("BookCar")]
@@ -80,20 +77,47 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var carChange = await _db.Cars.FindAsync(booking.Car);
-                carChange.Available = false;
-                _db.Entry(carChange).State = EntityState.Modified;
+                try
+                {
+                    var carChange = await _db.Cars.FindAsync(booking.Car);
+                    if (carChange != null)
+                    {
+                        carChange.Available = false;
+                        _db.Entry(carChange).State = EntityState.Modified;
 
-                _logger.LogInformation($"Finished booking car with id: {booking.Car.CarId}");
+                        _db.Bookings.Add(booking);
+                        await _db.SaveChangesAsync();
 
-                _db.Bookings.Add(booking);
-                await _db.SaveChangesAsync();
-                return RedirectToAction("SuccessfulBooking");
+                        _logger.LogInformation($"Finished booking car with id: {carChange.CarId}");
+
+                        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                        {
+                            return PartialView("_BookingConfirmationPartial", booking);
+                        }
+
+                        return View("BookingConfirmation", booking);
+                    }
+                    else
+                    {
+                        _logger.LogError($"Car with ID {booking.Car} not found.");
+                        ModelState.AddModelError("", "Car not found. Please try again.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error booking car: {ex.Message}");
+                    ModelState.AddModelError("", "An error occurred while processing your booking. Please try again.");
+                }
             }
 
-            _logger.LogInformation("Booking failed");
-            return View(booking);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            }
+
+            return View("BookCar", booking);
         }
+
 
 
         [HttpGet("BookFlight")]
@@ -101,11 +125,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         {
             int flightId = (int)TempData["FlightId"];
             int seatId = (int)TempData["SeatId"];
-            //var userId = (string)TempData["userId"];
 
             TempData["FlightId"] = null; // Clear TempData after retrieving values
             TempData["SeatId"] = null;
-            //TempData["userId"] = null;
 
             _logger.LogInformation($"Starting booking flight {flightId}, seat {seatId}");
 
@@ -122,32 +144,16 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
             {
                 return NotFound();
             }
+            
 
-            if (TempData["userId"] is string userIdString)
-            {
-                var userId = userIdString;
-                Booking result = new Booking();
-                result.UserId = userId;
-                result.ServiceId = 2;
-                result.Flight = flight;
-                result.Seats = flight.Seats[0];
+            Booking result = new Booking();
+            result.ServiceId = 2;
+            result.Flight = flight;
+            result.Seats = flight.Seats[0];
 
-                _logger.LogInformation($"WORKED {userId}");
+            _logger.LogInformation($"Booking made {result.BookingId}");
 
-                return View(result);
-            }
-            else
-            {
-                Booking result = new Booking();
-                result.UserId = "";
-                result.ServiceId = 2;
-                result.Flight = flight;
-                result.Seats = flight.Seats[0];
-
-                _logger.LogInformation($"failed0");
-
-                return View(result);
-            }
+            return View(result);
         }
 
         [HttpPost("BookFlight")]
@@ -156,17 +162,42 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var seatChange = await _db.Seats.FindAsync(booking.Seats.SeatId);
-                seatChange.Amount = booking.Seats.Amount;
-                _db.Entry(seatChange).State = EntityState.Modified;
+                try
+                {
+                    var seatChange = await _db.Seats.FindAsync(booking.Seats.SeatId);
+                    if (seatChange != null)
+                    {
+                        seatChange.Amount -= booking.Seats.Amount;
+                        _db.Entry(seatChange).State = EntityState.Modified;
 
-                _logger.LogInformation($"Finished booking flight {booking.Flight.FlightId}, seat {booking.Seats.SeatId}");
+                        _logger.LogInformation($"Finished booking flight {booking.Flight.FlightId}, seat {booking.Seats.SeatId}");
 
-                _db.Bookings.Add(booking);
-                await _db.SaveChangesAsync();
-                return RedirectToAction("SuccessfulBooking");
+                        _db.Bookings.Add(booking);
+                        await _db.SaveChangesAsync();
+
+                        _logger.LogInformation($"Finished booking flight {booking.Flight.FlightId}, seat {booking.Seats.SeatId}");
+
+                        return View("BookingConfirmation", booking);
+                    }
+                    else
+                    {
+                        _logger.LogError($"Seat with ID {booking.Seats} not found.");
+                        ModelState.AddModelError("", "Seat not found. Please try again.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error booking car: {ex.Message}");
+                    ModelState.AddModelError("", "An error occurred while processing your booking. Please try again.");
+                }
             }
-            return View(booking);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            }
+
+            return View("BookCar", booking);
         }
 
 
@@ -175,11 +206,9 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         {
             int hotelId = (int)TempData["HotelId"];
             int roomId = (int)TempData["RoomId"];
-            //var userId = (string)TempData["userId"];
 
             TempData["HotelId"] = null; // Clear TempData after retrieving values
             TempData["RoomId"] = null;
-            //TempData["userId"] = null;
 
             _logger.LogInformation($"Starting booking hotel with id: {hotelId}, room {roomId}");
 
@@ -197,31 +226,15 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
                 return NotFound();
             }
 
-            if (TempData["userId"] is string userIdString)
-            {
-                var userId = userIdString;
-                Booking result = new Booking();
-                result.UserId = userId;
-                result.ServiceId = 3;
-                result.Hotel = hotel;
-                result.Rooms = hotel.Rooms[0];
+            Booking result = new Booking();
+            result.UserId = "";
+            result.ServiceId = 3;
+            result.Hotel = hotel;
+            result.Rooms = hotel.Rooms[0];
 
-                _logger.LogInformation($"WORKED {userId}");
+            _logger.LogInformation($"Booking made {result.BookingId}");
 
-                return View(result);
-            }
-            else
-            {
-                Booking result = new Booking();
-                result.UserId = "";
-                result.ServiceId = 3;
-                result.Hotel = hotel;
-                result.Rooms = hotel.Rooms[0];
-
-                _logger.LogInformation($"failed0");
-
-                return View(result);
-            }
+            return View(result);
         }
 
 
@@ -232,17 +245,42 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var roomChange = await _db.Rooms.FindAsync(booking.Rooms.RoomId);
-                roomChange.Amount = booking.Rooms.Amount;
-                _db.Entry(roomChange).State = EntityState.Modified;
+                try
+                {
+                    var roomChange = await _db.Rooms.FindAsync(booking.Rooms.RoomId);
+                    if (roomChange != null)
+                    {
+                        roomChange.Amount -= booking.Rooms.Amount;
+                        _db.Entry(roomChange).State = EntityState.Modified;
 
-                _logger.LogInformation($"Finished booking hotel with id: {booking.Hotel.HotelId}, room {booking.Seats.SeatId}");
+                        _logger.LogInformation($"Finished booking hotel with id: {booking.Hotel.HotelId}, room {booking.Rooms.RoomId}");
 
-                _db.Bookings.Add(booking);
-                await _db.SaveChangesAsync();
-                return RedirectToAction("BookingConfirmation", booking);
+                        _db.Bookings.Add(booking);
+                        await _db.SaveChangesAsync();
+
+                        _logger.LogInformation($"Finished booking hotel {booking.Hotel.HotelId}, seat {booking.Rooms.RoomId}");
+
+                        return View("BookingConfirmation", booking);
+                    }
+                    else
+                    {
+                        _logger.LogError($"Seat with ID {booking.Seats} not found.");
+                        ModelState.AddModelError("", "Seat not found. Please try again.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error booking car: {ex.Message}");
+                    ModelState.AddModelError("", "An error occurred while processing your booking. Please try again.");
+                }
             }
-            return View("BookHotel", booking);
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            }
+
+            return View("BookCar", booking);
         }
 
     }

@@ -4,6 +4,7 @@ using GBC_Travel_Group_136.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GBC_Travel_Group_136.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240416193742_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,8 +264,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 1,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2204),
-                            Departure = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2146),
+                            Arrival = new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6003),
+                            Departure = new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(5956),
                             Destination = "Vancouver",
                             Origin = "Toronto"
                         },
@@ -270,8 +273,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 2,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2224),
-                            Departure = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2223),
+                            Arrival = new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6020),
+                            Departure = new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6019),
                             Destination = "Toronto",
                             Origin = "Vancouver"
                         });

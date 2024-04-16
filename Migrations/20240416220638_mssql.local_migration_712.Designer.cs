@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GBC_Travel_Group_136.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240415164613_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240416220638_mssql.local_migration_712")]
+    partial class mssqllocal_migration_712
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,9 +131,6 @@ namespace GBC_Travel_Group_136.Migrations
                     b.Property<int?>("HotelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberOfGuests")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberOfRooms")
                         .HasColumnType("int");
 
@@ -149,8 +146,9 @@ namespace GBC_Travel_Group_136.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookingId");
 
@@ -266,8 +264,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 1,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6363),
-                            Departure = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6322),
+                            Arrival = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2204),
+                            Departure = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2146),
                             Destination = "Vancouver",
                             Origin = "Toronto"
                         },
@@ -275,8 +273,8 @@ namespace GBC_Travel_Group_136.Migrations
                         {
                             FlightId = 2,
                             Airline = "Air Canada",
-                            Arrival = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6382),
-                            Departure = new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6381),
+                            Arrival = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2224),
+                            Departure = new DateTime(2024, 4, 16, 18, 6, 37, 573, DateTimeKind.Local).AddTicks(2223),
                             Destination = "Toronto",
                             Origin = "Vancouver"
                         });

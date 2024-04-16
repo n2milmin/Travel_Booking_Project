@@ -287,12 +287,11 @@ namespace GBC_Travel_Group_136.Migrations
                 {
                     BookingId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ServiceId = table.Column<int>(type: "int", nullable: false),
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NumberOfGuests = table.Column<int>(type: "int", nullable: false),
                     NumberOfRooms = table.Column<int>(type: "int", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     FlightId = table.Column<int>(type: "int", nullable: true),
@@ -352,8 +351,8 @@ namespace GBC_Travel_Group_136.Migrations
                 columns: new[] { "FlightId", "Airline", "Arrival", "Departure", "Destination", "Origin" },
                 values: new object[,]
                 {
-                    { 1, "Air Canada", new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6363), new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6322), "Vancouver", "Toronto" },
-                    { 2, "Air Canada", new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6382), new DateTime(2024, 4, 15, 12, 46, 12, 924, DateTimeKind.Local).AddTicks(6381), "Toronto", "Vancouver" }
+                    { 1, "Air Canada", new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6003), new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(5956), "Vancouver", "Toronto" },
+                    { 2, "Air Canada", new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6020), new DateTime(2024, 4, 16, 15, 37, 42, 36, DateTimeKind.Local).AddTicks(6019), "Toronto", "Vancouver" }
                 });
 
             migrationBuilder.InsertData(

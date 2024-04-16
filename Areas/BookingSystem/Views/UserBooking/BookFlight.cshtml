@@ -4,6 +4,9 @@
 }
 
 <h1>@ViewData["Title"]</h1>
+
+@Html.Partial("../_ErrorPartial", ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))
+
 <hr />
 @Html.Partial("../Flight/_FlightDetails.cshtml", Model.Flight)
 @Html.Partial("../Flight/_SeatDetails.cshtml", Model.Flight.Seats)
@@ -11,7 +14,7 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            <form asp-action="BookFlight">
+            <form id="bookFlightForm" asp-action="BookFlight">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="CheckInDate" class="control-label">Take-out-Date</label>
@@ -40,4 +43,41 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function () {
+            $('#bookFlightForm').submit(function (e) {
+                e.preventDefault(); // Prevent the form from submitting normally
+
+                var form = $(this);
+                var url = form.attr('action');
+                var method = form.attr('method');
+                var data = form.serialize();
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: data,
+                    success: function (result) {
+                        $('#bookingResult').html(result);
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $('#bookingResult').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+
+                        // Handle validation errors
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            var errors = xhr.responseJSON.errors;
+                            var errorList = '<ul>';
+                            $.each(errors, function (key, value) {
+                                errorList += '<li>' + value + '</li>';
+                            });
+                            errorList += '</ul>';
+                            $('#bookingResult').append('<div class="alert alert-danger">' + errorList + '</div>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
 }
