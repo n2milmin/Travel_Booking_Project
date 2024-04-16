@@ -1,7 +1,68 @@
-﻿
+﻿@model List<Booking>
+@inject ILogger<Index> _logger;
 @{
-    ViewData["Title"] = "User Booking";
+    ViewData["Title"] = "Bookings";
 }
 
-<h1>Index</h1>
+<h1>@User.Identity.Name</h1>
 
+@if (Model.Any())
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<td>Booking ID</td>
+				<td>Service</td>
+				<td>Info</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var booking in Model)
+			{
+				<tr>
+					<td>@booking.BookingId</td>
+					@if (booking.ServiceId == 1)
+					{
+						<td>Car</td>
+						<td>
+							@Html.Partial("../Car/_CarDetails.cshtml", booking.Car);
+						</td>
+					}
+					else if (booking.ServiceId == 2)
+					{
+						<td>Flight</td>
+						<td>
+							<p style="display:inline-block;">
+								@Html.Partial("../Flight/_FlightDetails.cshtml", booking.Flight);
+							</p>
+							<p>
+								@Html.Partial("../Flight/_SeatDetails.cshtml", booking.Seats);
+							</p>
+						</td>
+					}
+					else if (booking.ServiceId == 3)
+					{
+						<td>Hotel</td>
+						<td>
+							<p style="display:inline-block;">
+								@Html.Partial("../Hotel/_HotelDetails.cshtml", booking.Hotel);
+							</p>
+							<p>
+								@Html.Partial("../Hotel/_RoomDetails.cshtml", booking.Rooms);
+							</p>
+						</td>
+					}
+					else
+					{
+						<p>An error occured retrieving data</p>
+						//@_logger.LogInformation("Error occured with Service Id");
+					}
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<p>No bookings yet.</p>
+}

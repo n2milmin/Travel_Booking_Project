@@ -82,25 +82,20 @@ app.MapRazorPages();
 
 app.UseSession();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}");
 
-    endpoints.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Car}/{action=Index}/{id?}");
-    endpoints.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Hotel}/{action=Index}/{id?}");
-    endpoints.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Flight}/{action=Index}/{id?}");
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Car}/{action=Index}/{id?}");
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Flight}/{action=Index}/{id?}");
+app.MapControllerRoute(
+	name: "areas",
+	pattern: "{area:exists}/{controller=Hotel}/{action=Index}/{id?}");
 
-    // Enable attribute routing
-    endpoints.MapControllers();
-});
+app.MapControllerRoute(
+	name: "default",
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
 app.Run();

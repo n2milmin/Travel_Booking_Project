@@ -190,13 +190,13 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
                 else
                 {
                     emailExist.UserName = username;
-                    var result = await _userManager.AddPasswordAsync(emailExist, Input.Password);
+                    var result = await _userManager.ChangePasswordAsync(emailExist, emailExist.PasswordHash, Input.Password);
 
-                    if (result.Succeeded)
+                    if (!result.Succeeded)
                     {
                         result = await _userManager.AddToRoleAsync(user, Input.Role);
 
-                        _logger.LogInformation("User created a new account with password.");
+                        _logger.LogInformation($"User created a new account as {Input.Role}.");
 
                         if (!result.Succeeded)
                         {

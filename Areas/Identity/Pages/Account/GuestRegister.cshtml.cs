@@ -9,6 +9,7 @@ using System.Net.Mail;
 using System.Text.Encodings.Web;
 using System.Text;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
 {
@@ -19,18 +20,21 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public GuestRegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -98,13 +102,15 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 MailAddress address = new MailAddress(Input.Email);
+				string username = address.User;
 
-                var exists = await _userManager.FindByEmailAsync(Input.Email);
+				var exists = await _userManager.FindByEmailAsync(Input.Email);
 
                 if (exists == null)
                 {
                     user = new ApplicationUser
                     {
+                        UserName = username,
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
                         Email = Input.Email,
@@ -137,7 +143,6 @@ namespace GBC_Travel_Group_136.Areas.Identity.Pages.Account
 
                     TempData["userId"] = exists.Id;
 
-                    _logger.LogInformation($"{TempData["userId"]}");
                     return LocalRedirect(returnUrl);
                 }
             }

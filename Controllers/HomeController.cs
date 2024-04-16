@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace GBC_Travel_Group_136.Controllers
 {
-    [Route("Home")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,6 +15,8 @@ namespace GBC_Travel_Group_136.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Viewing home page.");
+
             return View();
         }
 

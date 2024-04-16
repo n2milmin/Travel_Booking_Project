@@ -26,9 +26,15 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
             _userManager = userManager;
             _logger = logger;
 		}
-		public IActionResult Index()
+        [HttpPost("Index")]
+		public async Task<IActionResult> Index()
 		{
-			return View();
+            var user = await _userManager.GetUserAsync(User);
+            var bookings = await _db.Bookings.ToListAsync();
+
+            bookings = bookings.Where(x => x.UserId == user.Id).ToList();
+
+            return View(bookings);
 		}
 
 

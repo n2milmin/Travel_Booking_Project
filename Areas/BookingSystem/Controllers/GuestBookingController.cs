@@ -32,10 +32,14 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
         public async Task<IActionResult> BookCar()
         {
             int carId = (int)TempData["CarId"];
-            //var userId = TempData["userId"];
+            string userId = "";
+            if (TempData.TryGetValue("YourVariable", out object value))
+            {
+                userId = value?.ToString();
+            }
 
             TempData["CarId"] = null; // Clear TempData after retrieving values
-            //TempData["userId"] = null;
+            TempData["userId"] = null;
 
             _logger.LogInformation($"Starting booking car with id: {carId}");
 
@@ -51,32 +55,22 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
                 return NotFound();
             }
 
-
-            if (TempData["userId"] is string userIdString)
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null)
             {
-                var userId = userIdString;
-                Booking result = new Booking();
-                result.UserId = userId;
-                result.ServiceId = 1;
-                result.Car = car;
-
-                _logger.LogInformation($"WORKED {userId}");
-
-                return View(result);
-            }
-            else
-            {
-                Booking result = new Booking();
-                result.UserId = "";
-                result.ServiceId = 1;
-                result.Car = car;
-
-                _logger.LogInformation($"failed0");
-
-                return View(result);
+                _logger.LogInformation($"No user found {userId}");
             }
 
+            Booking result = new Booking();
+            result.UserId = userId;
+            result.Email = user.Email;
+            result.ServiceId = 1;
+            result.BookingDate = DateTime.Now;
+            result.Car = car;
 
+            _logger.LogInformation($"Sending new booking to booking page");
+
+            return View(result);
 
         }
 
@@ -96,6 +90,8 @@ namespace GBC_Travel_Group_136.Areas.BookingSystem.Controllers
                 await _db.SaveChangesAsync();
                 return RedirectToAction("SuccessfulBooking");
             }
+
+            _logger.LogInformation("Booking failed");
             return View(booking);
         }
 
